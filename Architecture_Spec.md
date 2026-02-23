@@ -76,31 +76,33 @@ class MeshRoutingEngine:
 
     def acknowledge_delivery(self):
         pass
+```
 
-## Deliverables
+### Deliverables
 
--โมดูล Mesh Routing
-
--ระบบจำลองการส่งข้อความหลายโหนด
-
--รายงานประสิทธิภาพการส่งต่อข้อความ
+- โมดูล Mesh Routing
+- ระบบจำลองการส่งข้อความหลายโหนด
+- รายงานประสิทธิภาพการส่งต่อข้อความ
 
 ---
 
-# 5. Phase 3 – Emergency Broadcast Module
+## Phase 3: Emergency Broadcast Module
 
-## เป้าหมาย
-พัฒนาโหมดกระจายข้อความฉุกเฉินแบบเร่งด่วน
+### 5.1 เป้าหมาย
 
-## งานที่ต้องทำ
+พัฒนาโหมดกระจายข้อความฉุกเฉินแบบเร่งด่วน  
+เพื่อให้ข้อความสามารถส่งถึงโหนดใกล้เคียงทั้งหมดได้อย่างรวดเร็ว
 
--สร้างปุ่ม Emergency Mode
--เพิ่มระบบกำหนดระดับความสำคัญข้อความ
--พัฒนา Broadcast-to-All Nodes
--เพิ่ม Timestamp และ Sender ID
+### 5.2 งานที่ต้องทำ
 
-## โครงสร้าง Emergency Message
+- สร้างปุ่ม **Emergency Mode**
+- เพิ่มระบบกำหนดระดับความสำคัญข้อความ
+- พัฒนา Broadcast-to-All Nodes
+- เพิ่ม Timestamp และ Sender ID
 
+### 5.3 โครงสร้าง Emergency Message
+
+```ts
 interface EmergencyMessage {
     messageId: string
     senderId: string
@@ -109,12 +111,13 @@ interface EmergencyMessage {
     priorityLevel: "normal" | "high" | "critical"
     timestamp: number
 }
+```
 
 ## Deliverables
 
--ระบบ Broadcast ฉุกเฉิน
--ระบบแสดงข้อความเร่งด่วน
--ระบบจัดลำดับความสำคัญข้อความ
+- ระบบ Broadcast ฉุกเฉิน
+- ระบบแสดงข้อความเร่งด่วน
+- ระบบจัดลำดับความสำคัญข้อความ
 
 
 ---
@@ -126,16 +129,16 @@ interface EmergencyMessage {
 
 ## งานที่ต้องทำ
 
--เชื่อมต่อ Android Location API
--แนบพิกัดกับข้อความฉุกเฉิน
--แสดงตำแหน่งบนแผนที่ (Prototype)
--จัดเก็บพิกัดในฐานข้อมูลภายในเครื่อง
+- เชื่อมต่อ Android Location API
+- แนบพิกัดกับข้อความฉุกเฉิน
+- แสดงตำแหน่งบนแผนที่ (Prototype)
+- จัดเก็บพิกัดในฐานข้อมูลภายในเครื่อง
 
 ## Deliverables
 
--ระบบแนบตำแหน่ง GPS
--Prototype แสดงตำแหน่ง
--รายงานความแม่นยำของพิกัด
+- ระบบแนบตำแหน่ง GPS
+- Prototype แสดงตำแหน่ง
+- รายงานความแม่นยำของพิกัด
 
 ---
 
@@ -146,16 +149,16 @@ interface EmergencyMessage {
 
 ## งานที่ต้องทำ
 
--ทดสอบการล่มของโหนด (Node Failure Simulation)
--วิเคราะห์การใช้พลังงานแบตเตอรี่
--ปรับปรุงประสิทธิภาพการค้นหา Peer
--เพิ่ม Retry Mechanism
+- ทดสอบการล่มของโหนด (Node Failure Simulation)
+- วิเคราะห์การใช้พลังงานแบตเตอรี่
+- ปรับปรุงประสิทธิภาพการค้นหา Peer
+- เพิ่ม Retry Mechanism
 
 ## Deliverables
 
--รายงานการทดสอบความเสถียร
--ระบบ Retry และ Recovery
--Performance Benchmark
+- รายงานการทดสอบความเสถียร
+- ระบบ Retry และ Recovery
+- Performance Benchmark
 
 ---
 
