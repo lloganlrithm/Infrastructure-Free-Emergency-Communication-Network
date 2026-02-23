@@ -1,2 +1,2 @@
-# Infrastructure-Free Emergency Communication Network
+# Zero-Infrastructure Emergency Network
 ## Sprint Plan
