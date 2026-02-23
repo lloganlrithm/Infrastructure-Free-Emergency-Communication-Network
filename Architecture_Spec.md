@@ -1,4 +1,4 @@
-# Infrastructure-Free Emergency Communication Network
+# Zero-Infrastructure Emergency Network
 ## เอกสารสถาปัตยกรรมระบบ (Architecture Specification) v1.0
 
 ---
