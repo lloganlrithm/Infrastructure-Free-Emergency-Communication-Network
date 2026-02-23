@@ -1,4 +1,4 @@
-# Infrastructure-Free Emergency Communication Network Architecture Specification v1.0
+# Infrastructure-Free Emergency Communication Network
 ## Implementation Plan v1.0
 
 ---
