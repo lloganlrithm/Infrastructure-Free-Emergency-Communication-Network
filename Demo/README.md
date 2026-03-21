@@ -1,39 +1,54 @@
+# Infrastructure-Free Communication System for Disaster Recovery
+ 
+ 
+---
+## 🛠 โครงสร้างระบบ (System Architecture)
 
-# 📡 Emergency Mesh Network Simulator (EMTP)
+ระบบประกอบด้วยส่วนงานหลัก 3 ส่วน:
 
-ระบบจำลองเครือข่ายสื่อสารแบบไร้โครงสร้างพื้นฐาน (Infrastructure-free) สำหรับสถานการณ์ฉุกเฉิน พัฒนาด้วยแนวคิด **Mesh Topology** เพื่อให้การสื่อสารยังคงดำเนินต่อไปได้แม้เสาสัญญาณหลักหรืออินเทอร์เน็ตจะล่ม
-
-## 📋 ภาพรวมโครงการ (Project Overview)
-
-โครงการนี้ประกอบด้วยระบบจำลอง (Simulation Core) ที่เขียนด้วย Python และส่วนติดต่อผู้ใช้ (Dashboard Interface) ในรูปแบบ Web Application เพื่อแสดงให้เห็นการทำงานของ **Emergency Mesh Transfer Protocol (EMTP)** ในการส่งข้อความผ่าน Node ต่างๆ (Multi-hop Forwarding)
-
-### คุณสมบัติเด่น (Key Features)
-* **Decentralized Architecture**: ไม่มี Server กลาง ทุก Node ทำหน้าที่เป็นทั้งผู้รับและผู้ส่งต่อข้อความ
-* **Multi-hop Routing**: ระบบค้นหาเส้นทางส่งต่อข้อความอัตโนมัติ (Node A -> B -> C)
-* **Duplicate Detection**: ระบบป้องกันข้อความวนซ้ำในเครือข่ายเพื่อประหยัดทรัพยากร
-* **Priority System**: การแบ่งลำดับความสำคัญของข้อความ (Normal, Medium, High, Critical)
-* **Self-Healing**: เครือข่ายสามารถหาเส้นทางใหม่ได้ทันทีหากมี Node ใด Node หนึ่งออกจากระบบ (Node Failure)
+1.  **Core Simulator (`mesh_simulator.py`):** * จัดการ Logic ของเครือข่ายทั้งหมด
+    * กำหนดโปรโตคอล **EMTP (Emergency Mesh Transfer Protocol)**
+    * จัดการระบบ Priority, TTL (Time to Live) และการป้องกันข้อความซ้ำ (Duplicate Detection)
+2.  **Web Backend (`server.py`):**
+    * สร้าง HTTP Server บน Port 8081
+    * ทำหน้าที่เป็นตัวกลางเชื่อมต่อ UI เข้ากับ Mesh Simulator
+3.  **Frontend Dashboard (`index.html`, `style.css`, `app.js`):**
+    * UI จำลองหน้าจอสมาร์ทโฟนสำหรับผู้ใช้งาน
+    * แสดงสถานะเครือข่าย จำนวนโหนดที่เชื่อมต่อ และกล่องข้อความ
 
 ---
 
-## 🏗️ โครงสร้างทางเทคนิค (Technical Architecture)
+## ✨ คุณสมบัติทางเทคนิค (Technical Features)
 
-### 1. Backend: Mesh Core (Python)
-* **`mesh_simulator.py`**: หัวใจหลักของระบบ ประกอบด้วย Class `MeshNode` และ `MeshNetwork` ที่จัดการ Logic การรับ-ส่งข้อความ, การตรวจสอบ TTL (Time To Live), และการจัดการ Neighbor Table
-* **`server.py`**: ทำหน้าที่เป็น API Server ขนาดเล็ก (Base HTTP Server) เพื่อเชื่อมโยงโลกของ Python Simulation เข้ากับหน้าเว็บ
+### 📡 1. Mesh Routing & Self-Healing
+* **Multi-hop Propagation:** ข้อความสามารถเดินทางผ่านหลายโหนดเพื่อไปถึงปลายทาง
+* **Path Tracking:** ระบบจะบันทึกเส้นทางที่ข้อความวิ่งผ่าน (เช่น `Node_A → Node_B → You`)
+* **Fault Tolerance:** หากโหนดใดโหนดหนึ่งล่ม ระบบจะพยายามหาเส้นทางใหม่เพื่อส่งข้อความให้ถึงเป้าหมาย
 
-### 2. Frontend: Dashboard (HTML/CSS/JS)
-* **`index.html`**: หน้าจอจำลองสมาร์ทโฟนสำหรับผู้ใช้งานในพื้นที่ภัยพิบัติ
-* **`app.js`**: จัดการการเรียก API และการอัปเดตสถานะเครือข่ายแบบ Real-time
-* **`style.css`**: ออกแบบ UI ให้เหมาะสมกับการใช้งานฉุกเฉิน (High Contrast, Large Buttons)
+### ⚠️ 2. Emergency Services
+* **SOS Broadcast:** การส่งข้อความแบบกระจายเสียงไปยังทุกโหนดในเครือข่ายพร้อมระบุพิกัด GPS
+* **Priority Levels:** รองรับการแบ่งระดับความรุนแรงของเหตุการณ์ (Normal, Medium, High, Critical)
+
+### 🛡️ 3. Network Stability
+* **Duplicate Drop:** ป้องกันการส่งข้อความซ้ำซ้อนในเครือข่ายเพื่อประหยัดแบนด์วิธ
+* **TTL Control:** มีการจำกัดจำนวน Hop เพื่อป้องกันข้อมูลค้างในระบบนานเกินไป
 
 ---
 
-## 🚀 การติดตั้งและเริ่มใช้งาน (Getting Started)
+## 📊 ข้อมูลจำลองในระบบ (Simulation Data)
 
-1. **เตรียมความพร้อม**: ตรวจสอบว่าในเครื่องมี Python 3.x ติดตั้งอยู่
-2. **ดาวน์โหลดไฟล์**: คัดลอกไฟล์ทั้งหมดลงในโฟลเดอร์เดียวกัน
-3. **รันระบบจำลอง**:
+| ข้อมูล | รายละเอียด |
+| :--- | :--- |
+| **Nodes** | Node_You, Node_A, Node_B, Node_C, Node_D, Node_E |
+| **Protocol** | EMTP (Emergency Mesh Transfer Protocol) |
+| **Port** | 8081 |
+| **Priority** | 4 ระดับ (Normal - Critical) |
+
+---
+
+## 🚀 การติดตั้งและใช้งาน (Installation)
+
+1. **ดาวน์โหลดไฟล์โครงการ** และตรวจสอบว่ามี Python 3 ติดตั้งอยู่ในเครื่อง
+2. **รันเซิร์ฟเวอร์หลัก:**
    ```bash
-   python3 server.py```
-4. **เข้าใช้งาน:** เปิด Web Browser แล้วไปที่่ ```http://localhost:8081```
+   python server.py```
