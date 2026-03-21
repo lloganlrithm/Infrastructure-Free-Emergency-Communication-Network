@@ -107,3 +107,83 @@
    ```bash
    git clone [https://github.com/your-username/emergency-mesh-network.git](https://github.com/your-username/emergency-mesh-network.git)
    cd emergency-mesh-network
+---
+
+## 8. การติดตั้งและรันโปรแกรม (Installation & Execution)
+
+เพื่อให้ผู้ใช้งานสามารถรันระบบจำลอง (Simulator) ได้อย่างถูกต้อง ให้ปฏิบัติตามขั้นตอนดังนี้:
+
+### 8.1 การเตรียมระบบ (Prerequisites)
+* **Python 3.8 หรือสูงกว่า:** ตรวจสอบโดยใช้คำสั่ง `python --version` ใน Terminal/Command Prompt
+* **Web Browser:** แนะนำให้ใช้ Google Chrome หรือ Microsoft Edge เพื่อการแสดงผลที่สมบูรณ์
+
+### 8.2 ขั้นตอนการเริ่มทำงาน (Step-by-Step Guide)
+1. **เตรียมไฟล์โปรเจกต์:**
+   ตรวจสอบให้แน่ใจว่าไฟล์ `server.py`, `mesh_simulator.py`, `index.html` และ `style.css` อยู่ในโฟลเดอร์เดียวกัน
+2. **เปิด Terminal / Command Prompt:**
+   ใช้คำสั่ง `cd` เพื่อเข้าไปยังโฟลเดอร์ที่เก็บไฟล์โปรเจกต์
+3. **รันเซิร์ฟเวอร์จำลอง (Simulator Server):**
+   ใช้คำสั่งต่อไปนี้เพื่อเริ่มระบบ:
+   ```bash
+   python server.py
+   (หากระบบแจ้งว่าไม่รู้จักคำสั่ง python ให้ลองใช้ python3 server.py แทน)
+4. **เข้าใช้งาน Dashboard:**
+   เมื่อ Terminal ขึ้นข้อความ Server started, ให้เปิด Browser และไปที่:
+   http://localhost:8080
+
+### 8.3 กรณีที่พบปัญหา (Troubleshooting)
+   Error: Port 8080 is already in use: เกิดจากมีโปรแกรมอื่นใช้ Port นี้อยู่ ให้ปิดโปรแกรมนั้น หรือรีสตาร์ทเครื่อง
+
+   หน้าเว็บขาว/โหลดไม่ขึ้น: ตรวจสอบว่าในโฟลเดอร์มีไฟล์ index.html หรือไม่ และตรวจสอบว่าชื่อไฟล์ตรงกับที่เรียกใน server.py
+
+   ส่งข้อความแล้วไม่ไป: ตรวจสอบใน Terminal ว่ามี Error log สีแดงขึ้นหรือไม่ (ส่วนใหญ่เกิดจากไฟล์ mesh_simulator.py ไม่อยู่ในโฟลเดอร์เดียวกัน)
+
+   ---
+
+## 9. แผนการดำเนินงาน (Timeline Overview)
+
+โครงการนี้ใช้รูปแบบการพัฒนาแบบ **Phase-Based Iterative Development** โดยมีระยะเวลาดำเนินการรวมทั้งสิ้น 5 เดือน ดังนี้:
+
+* **Phase 1: Core Mesh Prototype (1 เดือน)** – พัฒนาระบบเชื่อมต่อ P2P พื้นฐานและการรับ-ส่งข้อความเบื้องต้น
+* **Phase 2: Mesh Routing Engine (1 เดือน)** – พัฒนาโปรโตคอล EMTP และระบบ Multi-hop Forwarding
+* **Phase 3: Emergency Communication (1 เดือน)** – ระบบจัดการลำดับความสำคัญ (Priority) และการส่งพิกัด GPS
+* **Phase 4: Optimization & Security (1 เดือน)** – ปรับปรุงการใช้พลังงาน (Low-power) และการเข้ารหัสข้อมูลเบื้องต้น
+* **Phase 5: Field Testing & Finalization (1 เดือน)** – ทดสอบในสภาวะจำลอง (Failure Simulation) และจัดทำสรุปโครงการ
+
+---
+
+## 10. การจัดการความเสี่ยง (Risk Management)
+
+| ความเสี่ยง | แนวทางป้องกันและแก้ไข |
+| :--- | :--- |
+| **การเชื่อมต่อไม่เสถียร** | ใช้ระบบ Retry และ Acknowledgement ในระดับโปรโตคอล |
+| **ข้อความซ้ำซ้อน (Duplicate)** | ใช้ Unique Message ID และ Duplicate Detection เพื่อป้องกัน Loop |
+| **แบตเตอรี่อุปกรณ์หมดเร็ว** | ปรับปรุงระบบให้ทำงานแบบ Low-power Background Service |
+| **ความเป็นส่วนตัวของข้อมูล** | นำระบบเข้ารหัสข้อมูลเบื้องต้นมาใช้ก่อนการ Broadcast |
+
+---
+
+## 11. ตัวชี้วัดความสำเร็จ (Success Metrics - KPIs)
+
+จากการทดสอบผ่านระบบจำลอง (Simulator) ระบบมีประสิทธิภาพเป็นไปตามเกณฑ์ดังนี้:
+
+* **Delivery Success Rate:** อัตราการส่งข้อความสำเร็จระหว่างอุปกรณ์ $\ge 99\%$
+* **Scalability:** รองรับการส่งต่อข้อมูล (Hop) อย่างน้อย 5 โหนด
+* **Performance:** เวลาเฉลี่ยในการส่งข้อมูล (Latency) $\le 3$ วินาที
+* **Reliability:** อัตราการสูญหายของข้อความ (Message Loss) $< 1\%$
+
+---
+
+## 12. สมาชิกผู้จัดทำ (Project Team)
+
+| ลำดับ | รายชื่อสมาชิก | รหัสนักศึกษา | บทบาทหน้าที่ |
+| :---: | :--- | :---: | :--- |
+| 1 | นางสาวกมลพร เกตุแก้ว | 673380571-1 | System Architecture & UI Design |
+| 2 | นางสาวพรีมภัทร ภาวัฒนวคุณ | 673380594-9 | Network Simulation Logic |
+| 3 | นางสาวพิชยา สิทธิพันธ์ | 673380596-5 | EMTP Protocol Design |
+| 4 | นางสาวมุกดา บุญประจันทร์ | 673380598-1 | Backend Server & Integration |
+| 5 | นางสาวสรนันท์ บุสดี | 673380605-0 | Testing & Data Analysis |
+
+---
+
+**Infrastructure-Free Emergency Communication Network** *Computer Network Project · Faculty of Engineering · 2024*
