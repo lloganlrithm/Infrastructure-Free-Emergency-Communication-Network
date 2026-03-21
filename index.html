@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Mesh Network - Demo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="phone-frame">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span class="time" id="currentTime">10:58</span>
+            <div class="battery">
+                <span>demo</span>
+                <span>🔋 85%</span>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <h1>Emergency Dashboard</h1>
+            <div class="network-status">
+                <div class="status-card">
+                    <div class="status-icon">🔗</div>
+                    <div class="status-label">Mesh Network</div>
+                    <div class="status-value">Connected</div>
+                    <div class="status-detail" id="nodeCount">6 Nodes Active</div>
+                </div>
+                <div class="status-card">
+                    <div class="status-icon">📍</div>
+                    <div class="status-label">Local Peers</div>
+                    <div class="status-value" id="nearbyCount">5 Nearby</div>
+                    <div class="status-detail">Within 500m</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Home View -->
+        <div id="homeView">
+            <!-- SOS Button -->
+            <div class="sos-section">
+                <button class="sos-button" onclick="sendSOS()">
+                    <div class="sos-icon">⚠️</div>
+                    <div class="sos-text">SOS</div>
+                </button>
+                <p class="sos-hint">
+                    Pressing SOS will broadcast your GPS<br>
+                    location and profile to all<br>
+                    nearby mesh nodes.
+                </p>
+            </div>
+
+            <!-- Quick Shortcuts -->
+            <div class="shortcuts">
+                <div class="shortcuts-title">Quick Shortcuts</div>
+                <div class="shortcuts-grid">
+                    <button class="shortcut-btn" onclick="sendQuickMessage('🏥 Need Medical', 'high')">
+                        <span class="shortcut-icon">🏥</span>
+                        <span>Need Medical</span>
+                    </button>
+                    <button class="shortcut-btn" onclick="sendQuickMessage('🆘 Trapped - need rescue', 'high')">
+                        <span class="shortcut-icon">🆘</span>
+                        <span>Trapped</span>
+                    </button>
+                    <button class="shortcut-btn" onclick="sendQuickMessage('✅ I\'m Safe', 'normal')">
+                        <span class="shortcut-icon">✅</span>
+                        <span>I'm Safe</span>
+                    </button>
+                    <button class="shortcut-btn" onclick="sendQuickMessage('👨‍👩‍👧‍👦 Looking for family members', 'high')">
+                        <span class="shortcut-icon">👨‍👩‍👧‍👦</span>
+                        <span>Find Family</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages View -->
+        <div id="messagesView" class="messages-view">
+            <h2 style="margin-bottom: 15px; font-size: 20px;">Messages</h2>
+            <div id="messagesList">
+                <!-- Messages will be added here -->
+            </div>
+        </div>
+
+        <!-- Message Input -->
+        <div class="message-section">
+            <div class="message-input-wrapper">
+                <input 
+                    type="text" 
+                    id="messageInput" 
+                    placeholder="Type emergency message..."
+                    onkeypress="handleKeyPress(event)"
+                >
+                <button class="send-btn" onclick="sendMessage()">▶</button>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="showView('home')">
+                <div class="nav-icon">🏠</div>
+                <div class="nav-label">Home</div>
+            </div>
+            <div class="nav-item" onclick="showView('messages')">
+                <div class="nav-icon">💬</div>
+                <div class="nav-label">Messages</div>
+            </div>
+            <div class="nav-item" onclick="showView('map')">
+                <div class="nav-icon">🗺️</div>
+                <div class="nav-label">Map</div>
+            </div>
+            <div class="nav-item" onclick="showView('mesh')">
+                <div class="nav-icon">📡</div>
+                <div class="nav-label">Mesh</div>
+            </div>
+            <div class="nav-item" onclick="showView('settings')">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-label">Settings</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert -->
+    <div class="alert" id="alert">
+        <strong>🚨 Emergency Broadcast Sent!</strong>
+    </div>
+
+    <script>
+        // Mesh Network Simulation
+        class MeshNetwork {
+            constructor() {
+                this.messages = [];
+                this.nodes = ['Node_You', 'Node_A', 'Node_B', 'Node_C', 'Node_D', 'Node_E'];
+            }
+
+            sendMessage(text, priority, broadcast = false) {
+                const paths = [
+                    'Node_You → Node_A → Node_B',
+                    'Node_You → Node_C → Node_D',
+                    'Node_You → Node_A → Node_D → Node_E',
+                    'Node_You → Node_C → Node_D → Node_E'
+                ];
+                
+                const path = broadcast ? 'Node_You → BROADCAST → All Nodes' : 
+                             paths[Math.floor(Math.random() * paths.length)];
+                
+                const hops = path.split('→').length - 1;
+
+                const message = {
+                    id: Date.now() + Math.random(),
+                    sender: 'You',
+                    text: text,
+                    time: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
+                    priority: priority,
+                    path: path,
+                    hops: hops,
+                    broadcast: broadcast
+                };
+
+                this.messages.unshift(message);
+                return message;
+            }
+
+            getMessages() {
+                return this.messages;
+            }
+        }
+
+        // Initialize network
+        const network = new MeshNetwork();
+
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('currentTime').textContent = `${hours}:${minutes}`;
+        }
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        // Simulate nearby nodes
+        let nearbyNodes = 5;
+        setInterval(() => {
+            nearbyNodes = Math.floor(Math.random() * 4) + 4; // 4-7 nodes
+            document.getElementById('nearbyCount').textContent = `${nearbyNodes} Nearby`;
+        }, 5000);
+
+        // Send SOS
+        function sendSOS() {
+            const message = network.sendMessage(
+                '🆘 EMERGENCY: Need immediate assistance! GPS: 16.4322° N, 102.8236° E',
+                'critical',
+                true
+            );
+            
+            addMessageToList(message);
+            showAlert('🚨 Emergency Broadcast Sent!');
+            
+            // Auto switch to messages view
+            setTimeout(() => {
+                showView('messages');
+            }, 2000);
+        }
+
+        // Send quick message
+        function sendQuickMessage(text, priority) {
+            const message = network.sendMessage(text, priority, false);
+            addMessageToList(message);
+            showAlert('✓ Message sent to mesh network');
+        }
+
+        // Send custom message
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            const message = network.sendMessage(text, 'normal', false);
+            addMessageToList(message);
+            showAlert('✓ Message sent');
+            input.value = '';
+        }
+
+        // Handle Enter key
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Add message to list
+        function addMessageToList(message) {
+            const messagesList = document.getElementById('messagesList');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message-item priority-${message.priority}`;
+            messageDiv.innerHTML = `
+                <div class="message-header">
+                    <span class="message-sender">${message.sender}</span>
+                    <span class="message-time">${message.time}</span>
+                </div>
+                <div class="message-content">${message.text}</div>
+                <div class="message-path">Path: ${message.path} (${message.hops} hops)</div>
+            `;
+            messagesList.insertBefore(messageDiv, messagesList.firstChild);
+        }
+
+        // Show alert
+        function showAlert(text) {
+            const alert = document.getElementById('alert');
+            alert.innerHTML = `<strong>${text}</strong>`;
+            alert.classList.add('show');
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 3000);
+        }
+
+        // Show view
+        function showView(view) {
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Update content
+            if (view === 'home') {
+                document.getElementById('homeView').style.display = 'block';
+                document.getElementById('messagesView').classList.remove('active');
+            } else if (view === 'messages') {
+                document.getElementById('homeView').style.display = 'none';
+                document.getElementById('messagesView').classList.add('active');
+            } else {
+                showAlert(`📱 ${view.charAt(0).toUpperCase() + view.slice(1)} view - Demo mode`);
+            }
+        }
+
+        // Add demo received message after 3 seconds
+        setTimeout(() => {
+            const demoMessage = {
+                id: Date.now(),
+                sender: 'Node_A (Sarah)',
+                text: 'Has anyone seen the rescue team? We need medical supplies at sector 7.',
+                time: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
+                priority: 'high',
+                path: 'Node_A → Node_B → You',
+                hops: 2
+            };
+            network.messages.unshift(demoMessage);
+            addMessageToList(demoMessage);
+            showAlert('📬 New message received');
+        }, 3000);
+
+        // Add another demo message after 8 seconds
+        setTimeout(() => {
+            const demoMessage = {
+                id: Date.now(),
+                sender: 'Node_C (Rescue Team)',
+                text: '📍 Rescue team located at coordinates 16.4340° N, 102.8250° E. We have medical supplies.',
+                time: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
+                priority: 'normal',
+                path: 'Node_C → Node_D → You',
+                hops: 2
+            };
+            network.messages.unshift(demoMessage);
+            addMessageToList(demoMessage);
+            showAlert('📬 New message received');
+        }, 8000);
+    </script>
+</body>
+</html>
