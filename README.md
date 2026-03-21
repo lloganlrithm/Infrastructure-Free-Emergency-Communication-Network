@@ -81,9 +81,84 @@ https://youtu.be/1PTrfmPo8hk
 
 ---
 
-## 5. การติดตั้งและรันโปรแกรม (Installation)
+### 4.1 กลไกการประมวลผลข้อความ (Message Processing Flow)
+เมื่อโหนดได้รับข้อความ (Packet) จะมีการประมวลผลตามอัลกอริทึมดังนี้:
+1.  **Duplicate Detection:** ตรวจสอบ `message_id` ใน `processed_messages` (Set) หากซ้ำจะทำการ Drop ทันที
+2.  **TTL Validation:** ตรวจสอบค่า `ttl` หากค่าเป็น 0 จะไม่ส่งต่อ
+3.  **Priority Queuing:** ข้อความระดับ `CRITICAL` จะถูกแทรกคิวเพื่อส่งออก (Forward) เป็นลำดับแรก
+4.  **Path Tracking:** บันทึกชื่อโหนดลงใน `forwarding_path` เพื่อใช้ในการ Trace เส้นทางกลับ
 
-1. **ติดตั้ง Python 3.x** ในเครื่องของคุณ
-2. **รันเซิร์ฟเวอร์จำลอง:**
+### 4.2 การจำลองความล้มเหลว (Node Failure Simulation)
+ใน `demo_node_failure()` ระบบจะทำการ `disconnect_nodes` หรือตั้งค่าโหนดให้ `Inactive` ระหว่างการส่งข้อมูล:
+* **Self-Healing Test:** ระบบจะพยายามส่งข้อความผ่านทางเลือกอื่น (เช่น จากเดิม You → A → B เปลี่ยนเป็น You → C → D)
+* **Metrics:** วัดผลจาก `delivery_success_rate` และ `average_hop_count` ที่เพิ่มขึ้นจากการอ้อมโหนดที่ล่ม
+
+---
+
+## 5. ทฤษฎีการจัดการคิวและเครือข่าย (Queue & Network Theory)
+
+### M/M/1 Queue Analogy
+ในระบบจำลองนี้ แต่ละโหนดทำงานเสมือนเป็นระบบคิวเดี่ยว (Single Server Queue):
+* **Arrival Rate ($\lambda$):** อัตราการรับข้อความจากโหนดรอบข้าง
+* **Service Rate ($\mu$):** ความเร็วในการประมวลผลและส่งต่อข้อมูลผ่านโปรโตคอล EMTP
+* **Priority Scheduling:** ระบบใช้ **Non-preemptive Priority Queue** เพื่อจัดการข้อความ SOS ให้มีความหน่วงต่ำที่สุด
+
+---
+
+## 6. Dashboard และการแสดงผล (Visual Analytics)
+
+### ส่วนแสดงผล Real-Time (Web Interface)
+หน้าจอ Dashboard ใน `index.html` ถูกออกแบบมาเพื่อจำลองประสบการณ์ผู้ใช้จริง:
+* **Network Status Card:** แสดงจำนวนโหนดที่ออนไลน์อยู่ (Nodes Active) และโหนดใกล้เคียง (Local Peers)
+* **Message Feed:** แสดงรายการข้อความพร้อมแถบสีระบุความเร่งด่วน (แดง = Critical, ส้ม = High)
+* **Path Trace:** แสดงผล "Node_A → Node_B → You" เพื่อให้ผู้ใช้ทราบว่าข้อความเดินทางผ่านใครมาบ้าง
+
+---
+
+## 7. ตารางสรุป Metrics & Success Criteria
+
+| Layer / Component | Metric (ตัวชี้วัด) | เกณฑ์ความสำเร็จ (Target) | คำอธิบาย |
+| :--- | :--- | :--- | :--- |
+| **Network** | Delivery Success Rate | ≥ 99% | อัตราความสำเร็จในการส่งข้อความ |
+| **Routing** | Max Hop Count | 30 Hops | ขอบเขตการกระจายข้อมูล (TTL) |
+| **Performance** | Latency per Hop | < 3 Seconds | ความเร็วในการ Relay ข้อมูล |
+| **Reliability** | Recovery Time | < 5 Seconds | เวลาที่ใช้หาเส้นทางใหม่เมื่อโหนดล่ม |
+
+---
+
+## 8. การติดตั้งและรันโปรแกรม (Setup Guide)
+
+### สิ่งที่ต้องการ (Prerequisites)
+* Python 3.8 หรือเวอร์ชันที่สูงกว่า
+* Web Browser (Chrome, Firefox, Safari)
+
+### ขั้นตอนการเริ่มใช้งาน
+1.  **Clone Repository:**
+    ```bash
+    git clone [https://github.com/your-username/emergency-mesh-network.git](https://github.com/your-username/emergency-mesh-network.git)
+    cd emergency-mesh-network
+    ```
+2.  **Start Simulator & Server:**
+    ```bash
+    python server.py
+    ```
+3.  **Access Dashboard:**
+    เปิด Browser ไปที่ `http://localhost:8080`
+
+---
+
+## 9. สมาชิกผู้จัดทำ (Project Team)
+
+| รายชื่อสมาชิก | รหัสนักศึกษา | บทบาทหน้าที่ |
+| :--- | :--- | :--- |
+| นางสาวกมลพร เกตุแก้ว | 673380571-1 | System Architecture & UI |
+| นางสาวพรีมภัทร ภาวัฒนวคุณ | 673380594-9 | Network Simulation Logic |
+| นางสาวพิชยา สิทธิพันธ์ | 673380596-5 | EMTP Protocol Design |
+| นางสาวมุกดา บุญประจันทร์ | 673380598-1 | Backend Server & Integration |
+| นางสาวสรนันท์ บุสดี | 673380605-0 | Testing & Data Analysis |
+
+---
+**Infrastructure-Free Emergency Communication Network**
+*Computer Network Project - 2024*
    ```bash
    python server.py
